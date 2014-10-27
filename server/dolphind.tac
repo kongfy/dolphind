@@ -1,5 +1,6 @@
 from twisted.web import xmlrpc, server
 from twisted.internet import reactor, defer, utils
+from twisted.application import service, internet
 
 import gc
 gc.enable()
@@ -110,13 +111,14 @@ class Example(xmlrpc.XMLRPC):
         """
         raise xmlrpc.Fault(123, "The fault procedure is faulty.")
 
-if __name__ == '__main__':
-    r = Example()
-    reactor.listenTCP(7080, server.Site(r))
-    reactor.run()
+r = Example()
 
-    gc.collect()
-    print "gc.garbage:", len(gc.garbage)
+application = service.Application("dolphind")
+service = internet.TCPServer(7080, server.Site(r))
+service.setServiceParent(application)
 
-    for item in gc.garbage:
-        print item
+gc.collect()
+print "gc.garbage:", len(gc.garbage)
+
+for item in gc.garbage:
+    print item
