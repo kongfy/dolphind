@@ -1,21 +1,71 @@
-from twisted.internet import utils
+from twisted.internet import utils, defer
 from twisted.python import log
 
+from common.config import CFG
+
 LOGTAG = 'ipmihandler.excutor'
+FORMAT = 'ipmitool -I lanplus -H %s -U %s -P %s sel list -vv'
 
-class Getter(object):
-    def _toHTML(self, r):
-        """
-        """
-        out, err, signalNum = r
-        return "Result: %s" % out
+def command(host, user, passwd):
+    cmd = FORMAT % (host, user, passwd)
+    log.msg('CMD : %s' % cmd, system=LOGTAG)
+    tmp = cmd.split()
+    return tmp[0], tmp[1:]
 
-    def getIPMI(self, host, user, passwd):
-        """
-        """
-        cmd = '/bin/sleep'
-        log.msg('CMD : %s' % cmd, system=LOGTAG)
-        d = utils.getProcessOutputAndValue('/bin/sleep', args=(['10']))
-        d.addCallback(self._toHTML)
+class Excutor(object):
+    def __init__(self, host, user, passwd):
+        "docstring"
+        self._retry_count = int(CFG['server']['max_retry'])
+        self._host = host
+        self._user = user
+        self._passwd = passwd
 
-        return d
+    def _on_exit(self, result):
+        out, err, code = result
+        if code != 0:
+            raise ValueError('ipmitool exit with code %s' % code)
+        return out
+
+    def _explain(self, result):
+        """
+        """
+        if self.d is None:
+            log.msg("Nowhere to put results", system=LOGTAG)
+            return
+
+        d = self.d
+        self.d = None
+        d.callback(result)
+
+    def _failed(self, err):
+        if self.d is None:
+            log.msg("Nowhere to put results", system=LOGTAG)
+            return
+
+        d = self.d
+        self.d = None
+        d.errback(err)
+
+    def _retry(self, err):
+        """
+        """
+        if self._retry_count == 0:
+            log.msg('Abort, retry times out.', system=LOGTAG)
+            self._failed(err)
+            return
+
+        log.msg("Excutor's retry count down : %s" % self._retry_count,
+                system=LOGTAG)
+
+        self._retry_count -= 1
+        d = utils.getProcessOutputAndValue(*command(self._host,
+                                                    self._user,
+                                                    self._passwd))
+        d.addCallback(self._on_exit)
+        d.addCallbacks(self._explain, self._retry)
+
+    def start(self):
+        self._retry(None)
+
+        self.d = defer.Deferred()
+        return self.d

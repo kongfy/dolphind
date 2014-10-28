@@ -9,14 +9,14 @@ def printValue(value):
     reactor.stop()
 
 def printError(error):
-    print 'error', error
+    print repr(error)
     reactor.stop()
 
 def main():
     parser = OptionParser()
     parser.add_option("-H", "--host", dest="host", action="store",
                       default="localhost",
-                      help="Remote server address, can be IP address or hostname.",)
+                      help="Remote server IPv4 address.",)
 
     parser.add_option("-U", "--user", dest="user", action="store",
                       default="NULL",

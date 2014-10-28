@@ -5,7 +5,9 @@ from functools import partial
 from collections import deque
 
 from common import singleton
-from common import config
+from common import utils
+from common.config import CFG
+
 from ipmihandler import excutor
 
 LOGTAG = 'ipmihandler.manager'
@@ -14,7 +16,7 @@ LOGTAG = 'ipmihandler.manager'
 class Manager(object):
     def __init__(self):
         self._pending = deque()
-        self._token = int(config.Config()['server']['max_concurrent'])
+        self._token = int(CFG['server']['max_concurrent'])
 
     def _excute(self):
         if self._token <= 0 or len(self._pending) == 0:
@@ -23,21 +25,34 @@ class Manager(object):
         self._token -= 1
 
         info, d = self._pending.popleft()
-        callback = partial(self._finish, d)
+        callback = partial(self._succeed, d)
+        errback = partial(self._failed, d)
 
         log.msg('Excute command, token left : %d' % self._token, system=LOGTAG)
-        worker = excutor.Getter()
-        d = worker.getIPMI(*info)
-        d.addCallback(callback)
+        worker = excutor.Excutor(*info)
+        d = worker.start()
+        d.addCallbacks(callback, errback)
+        d.addCallback(self._release)
 
-    def _finish(self, d, r):
-        d.callback(r)
-
+    def _release(self, success):
         self._token += 1
-        log.msg('Finished, token left : %d' % self._token, system=LOGTAG)
+        log.msg('Success : %s, token left : %d' % (success, self._token),
+                system=LOGTAG)
         self._excute()
+        return
+
+    def _failed(self, d, err):
+        d.errback(err)
+        return False
+
+    def _succeed(self, d, res):
+        d.callback(res)
+        return True
 
     def fetchIPMI(self, host, user, passwd):
+        if not utils.is_valid_ip_address_v4(host):
+            return defer.fail(ValueError("ERROR : Invalid IP address."))
+
         d = defer.Deferred()
         self._pending.append(((host, user, passwd), d))
         self._excute()

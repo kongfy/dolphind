@@ -1,4 +1,4 @@
-def singleton(cls, *args, **kwargs):
+def singleton(cls):
     instances = {}
     def _singleton(*args, **kwargs):
         if cls not in instances:

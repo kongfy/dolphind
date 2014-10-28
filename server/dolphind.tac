@@ -1,6 +1,6 @@
 from twisted.web import xmlrpc, server
 from twisted.application import service, internet
-from common import config
+from common.config import CFG
 
 import ipmihandler.manager
 
@@ -21,7 +21,6 @@ class RPC(xmlrpc.XMLRPC):
         print host, user, passwd
         return self._manager.fetchIPMI(host, user, passwd)
 
-CFG = config.Config()
 port = int(CFG['server']['port'])
 r = RPC()
 
