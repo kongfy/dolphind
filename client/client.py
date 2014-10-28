@@ -12,6 +12,7 @@ def printError(error):
 def main():
     proxy = Proxy('http://localhost:7080')
     proxy.callRemote('echo', 3).addCallbacks(printValue, printError)
+    print 'remote call return'
     reactor.run()
 
 if __name__ == '__main__':

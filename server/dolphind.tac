@@ -1,17 +1,13 @@
 from twisted.web import xmlrpc, server
-from twisted.internet import reactor, defer, utils
+from twisted.internet import defer, utils
 from twisted.application import service, internet
+
 
 import gc
 gc.enable()
 gc.set_debug(gc.DEBUG_LEAK)
 
 class Getter(object):
-    def __init__(self, id):
-        "docstring"
-
-        self._id = id
-
     def _toHTML(self, r):
         """
         This function converts r to HTML.
@@ -22,9 +18,6 @@ class Getter(object):
         """
         out, err, signalNum = r
         return "Result: %s" % out
-
-    def _finish(self, r):
-        return (self._id, r)
 
     def getDummyData(self, x):
         """
@@ -38,38 +31,34 @@ class Getter(object):
         """
         d = utils.getProcessOutputAndValue('/bin/sleep', args=(['10']))
         d.addCallback(self._toHTML)
-        d.addCallback(self._finish)
 
         return d
+
+from functools import partial
+from collections import deque
 
 class Manager(object):
     def __init__(self, max):
         "docstring"
 
-        self._working = {};
-        self._pending = [];
-        self._token = max;
-        self._id = 0;
+        self._pending = deque()
+        self._token = max
 
     def _excute(self):
         if self._token <= 0 or len(self._pending) == 0:
             return
 
         self._token -= 1
-        id = self._id
-        self._id = self._id + 1
 
-        x, d = self._pending.pop()
-        self._working[id] = (x, d)
+        x, d = self._pending.popleft()
+        callback = partial(self._finish, d)
 
-        print "excute id %s token %d" % (id, self._token)
-        excutor = Getter(id)
+        print "excute command, token left : %d" % self._token
+        excutor = Getter()
         d = excutor.getDummyData(x)
-        d.addCallback(self._finish)
+        d.addCallback(callback)
 
-    def _finish(self, r):
-        id, r = r
-        _, d = self._working.pop(id)
+    def _finish(self, d, r):
         d.callback(r)
 
         self._token += 1
@@ -78,7 +67,7 @@ class Manager(object):
 
     def fetchIPMI(self, x):
         d = defer.Deferred()
-        self._pending.insert(0, (x, d))
+        self._pending.append((x, d))
         self._excute()
         return d
 
