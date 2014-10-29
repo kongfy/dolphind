@@ -16,6 +16,7 @@ from collections import deque
 
 from common import singleton
 from common import utils
+from common import exception
 from common.config import CFG
 from ipmihandler import excutor
 
@@ -73,7 +74,6 @@ class Manager(object):
         :param d:   the deferred object should be called
         :param err: error during excutor's routine
         """
-
         d.errback(err)
         return False
 
@@ -99,7 +99,7 @@ class Manager(object):
         """
 
         if not utils.is_valid_ip_address_v4(host):
-            return defer.fail(ValueError("ERROR : Invalid IP address."))
+            return defer.fail(exception.InvalidIPAddr())
 
         d = defer.Deferred()
         self._pending.append(((host, user, passwd), d))

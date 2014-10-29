@@ -12,6 +12,7 @@ from twisted.internet import utils, defer, reactor
 from twisted.python import log
 
 from common.config import CFG
+from common import exception
 
 LOGTAG = __name__
 FORMAT = 'ipmitool -I lanplus -H %s -U %s -P %s sel list -vv'
@@ -55,7 +56,7 @@ class Excutor(object):
 
         out, err, code = result
         if code != 0:
-            raise ValueError('ipmitool exit with code %s' % code)
+            raise exception.RuntimeError()
         return out
 
     def _explain(self, result):

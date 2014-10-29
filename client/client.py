@@ -31,7 +31,7 @@ def error_callback(error):
     :param error: error from rpc
     """
 
-    print repr(error)
+    print error
     reactor.stop()
 
 def main():

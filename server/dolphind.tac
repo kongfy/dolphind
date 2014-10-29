@@ -28,6 +28,14 @@ class RPC(xmlrpc.XMLRPC):
         xmlrpc.XMLRPC.__init__(self)
         self._manager = ipmihandler.manager.Manager()
 
+    def _failed(self, err):
+        """
+        Faild.
+
+        :param err: error...
+        """
+        raise xmlrpc.Fault(err.value.code, err.value.message)
+
     def xmlrpc_simple(self, host="127.0.0.1", user="NULL", passwd="NULL"):
         """
         simple rpc interface for dolphind's client.
@@ -40,7 +48,9 @@ class RPC(xmlrpc.XMLRPC):
         """
 
         print host, user, passwd
-        return self._manager.commit_job(host, user, passwd)
+        d = self._manager.commit_job(host, user, passwd)
+        d.addErrback(self._failed)
+        return d
 
 port = int(CFG['server']['port'])
 r = RPC()
