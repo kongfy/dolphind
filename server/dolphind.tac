@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+
+"""
+This is the dolphind server program.
+Powered by Twisted framework, you can run dolphind as follow:
+
+# twistd -y dolphind.tac
+"""
+
+__authors__ = [
+    '"Fanyu Kong" <me@kongfy.com>',
+]
+
+
 from twisted.web import xmlrpc, server
 from twisted.application import service, internet
 from common.config import CFG
@@ -6,20 +20,27 @@ import ipmihandler.manager
 
 class RPC(xmlrpc.XMLRPC):
     """
-    An example object to be published.
+    dolpind provide service by XML-RPC,
+    this is dolphind's service class.
     """
 
     def __init__(self):
-        "docstring"
         xmlrpc.XMLRPC.__init__(self)
         self._manager = ipmihandler.manager.Manager()
 
-    def xmlrpc_simple(self, host="localhost", user="NULL", passwd="NULL"):
+    def xmlrpc_simple(self, host="127.0.0.1", user="NULL", passwd="NULL"):
         """
-        Return all passed args.
+        simple rpc interface for dolphind's client.
+        run an simple ipmitool command only.
+
+        :param host:   ipmi target's IPv4 address
+        :param user:   ipmi username
+        :param passwd: ipmi password
+        :returns:      a deferred object
         """
+
         print host, user, passwd
-        return self._manager.fetchIPMI(host, user, passwd)
+        return self._manager.commit_job(host, user, passwd)
 
 port = int(CFG['server']['port'])
 r = RPC()

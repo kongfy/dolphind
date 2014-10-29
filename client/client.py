@@ -1,21 +1,47 @@
+# -*- coding: utf-8 -*-
+
+"""
+This is the client program for dolphin, enjoy it.
+"""
+
+__authors__ = [
+    '"Fanyu Kong" <me@kongfy.com>',
+]
+
 from twisted.web.xmlrpc import Proxy
 from twisted.internet import reactor
 from optparse import OptionParser
 
-from common import config
+from common.config import CFG
 
-def printValue(value):
+def success_callback(value):
+    """
+    Callback method for rpc calls return successful.
+
+    :param value: return value
+    """
+
     print repr(value)
     reactor.stop()
 
-def printError(error):
+def error_callback(error):
+    """
+    Callback method for rpc calls return an error.
+
+    :param error: error from rpc
+    """
+
     print repr(error)
     reactor.stop()
 
 def main():
+    """
+    client script main method.
+    """
+
     parser = OptionParser()
     parser.add_option("-H", "--host", dest="host", action="store",
-                      default="localhost",
+                      default="127.0.0.1",
                       help="Remote server IPv4 address.",)
 
     parser.add_option("-U", "--user", dest="user", action="store",
@@ -27,13 +53,12 @@ def main():
                       help="Remote server password.",)
     options, _ = parser.parse_args()
 
-    cfg = config.Config()
-    url = 'http://%s:%s' % (cfg['client']['server'], cfg['client']['port'])
+    url = 'http://%s:%s' % (CFG['client']['server'], CFG['client']['port'])
     proxy = Proxy(url)
     proxy.callRemote('simple',
                      options.host,
                      options.user,
-                     options.passwd).addCallbacks(printValue, printError)
+                     options.passwd).addCallbacks(success_callback, error_callback)
 
     reactor.run()
 
