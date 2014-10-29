@@ -35,7 +35,7 @@ class DException(Exception):
         if not message:
             try:
                 message = self.message % kwargs
-            except Exception as e:
+            except Exception:
                 message = self.message
 
         super(DException, self).__init__(message)
@@ -50,7 +50,7 @@ class InvalidIPAddr(DException):
     message = "Invalid IPv4 address."
     code = 400
 
-class RuntimeError(DException):
+class IPMIToolError(DException):
     """
     Raise when subprocess exit with code != 0
     """

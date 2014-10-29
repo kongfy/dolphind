@@ -56,7 +56,7 @@ class Excutor(object):
 
         out, err, code = result
         if code != 0:
-            raise exception.RuntimeError()
+            raise exception.IPMIToolError()
         return out
 
     def _explain(self, result):
