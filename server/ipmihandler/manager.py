@@ -74,6 +74,7 @@ class Manager(object):
         :param d:   the deferred object should be called
         :param err: error during excutor's routine
         """
+
         d.errback(err)
         return False
 

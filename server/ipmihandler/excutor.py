@@ -65,6 +65,7 @@ class Excutor(object):
 
         :param result: output given by _on_exit()
         """
+
         if self.d is None:
             log.msg("WARNING : Nowhere to put results.", system=LOGTAG)
             return
@@ -79,6 +80,7 @@ class Excutor(object):
 
         :param err: error...
         """
+
         if self.d is None:
             log.msg("WARNING : Nowhere to put results.", system=LOGTAG)
             return
@@ -93,6 +95,7 @@ class Excutor(object):
 
         :param err: error...
         """
+
         if self._retry_count == 0:
             log.msg('Abort, retry times out.', system=LOGTAG)
             self._failed(err)
@@ -108,6 +111,7 @@ class Excutor(object):
 
         :param err: error...
         """
+
         log.msg("Excutor's retry count down : %s." % self._retry_count,
                 system=LOGTAG)
 

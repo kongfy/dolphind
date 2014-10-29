@@ -18,6 +18,7 @@ class DException(Exception):
     with the keyword arguments provided to the constructor.
 
     """
+
     message = "An unknown exception occurred."
     code = 500
     headers = {}
@@ -47,6 +48,7 @@ class InvalidIPAddr(DException):
     """
     Raise when IP address is not valid.
     """
+
     message = "Invalid IPv4 address."
     code = 400
 
@@ -54,5 +56,6 @@ class IPMIToolError(DException):
     """
     Raise when subprocess exit with code != 0
     """
+
     message = "Runtime error."
     code = 401

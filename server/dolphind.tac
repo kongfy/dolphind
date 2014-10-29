@@ -34,6 +34,7 @@ class RPC(xmlrpc.XMLRPC):
 
         :param err: error...
         """
+
         raise xmlrpc.Fault(err.value.code, err.value.message)
 
     def xmlrpc_simple(self, host="127.0.0.1", user="NULL", passwd="NULL"):
