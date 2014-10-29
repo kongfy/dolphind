@@ -1,4 +1,4 @@
-from twisted.internet import utils, defer
+from twisted.internet import utils, defer, reactor
 from twisted.python import log
 
 from common.config import CFG
@@ -16,6 +16,7 @@ class Excutor(object):
     def __init__(self, host, user, passwd):
         "docstring"
         self._retry_count = int(CFG['server']['max_retry'])
+        self._retry_interval = int(CFG['server']['retry_interval'])
         self._host = host
         self._user = user
         self._passwd = passwd
@@ -30,7 +31,7 @@ class Excutor(object):
         """
         """
         if self.d is None:
-            log.msg("Nowhere to put results", system=LOGTAG)
+            log.msg("WARNING : Nowhere to put results.", system=LOGTAG)
             return
 
         d = self.d
@@ -39,14 +40,14 @@ class Excutor(object):
 
     def _failed(self, err):
         if self.d is None:
-            log.msg("Nowhere to put results", system=LOGTAG)
+            log.msg("WARNING : Nowhere to put results.", system=LOGTAG)
             return
 
         d = self.d
         self.d = None
         d.errback(err)
 
-    def _retry(self, err):
+    def _retry_with_delay(self, err):
         """
         """
         if self._retry_count == 0:
@@ -54,7 +55,14 @@ class Excutor(object):
             self._failed(err)
             return
 
-        log.msg("Excutor's retry count down : %s" % self._retry_count,
+        log.msg('Failed, will retry in %s seconds.' % self._retry_interval,
+                system=LOGTAG)
+        reactor.callLater(self._retry_interval, self._retry, err)
+
+    def _retry(self, err):
+        """
+        """
+        log.msg("Excutor's retry count down : %s." % self._retry_count,
                 system=LOGTAG)
 
         self._retry_count -= 1
@@ -62,7 +70,7 @@ class Excutor(object):
                                                     self._user,
                                                     self._passwd))
         d.addCallback(self._on_exit)
-        d.addCallbacks(self._explain, self._retry)
+        d.addCallbacks(self._explain, self._retry_with_delay)
 
     def start(self):
         self._retry(None)
