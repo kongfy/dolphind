@@ -16,7 +16,8 @@ from twisted.web import xmlrpc, server
 from twisted.application import service, internet
 from common.config import CFG
 
-import ipmihandler.manager
+from ipmihandler import manager
+from requesthandler import request
 
 class RPC(xmlrpc.XMLRPC):
     """
@@ -26,7 +27,7 @@ class RPC(xmlrpc.XMLRPC):
 
     def __init__(self):
         xmlrpc.XMLRPC.__init__(self)
-        self._manager = ipmihandler.manager.Manager()
+        self._manager = manager.Manager()
 
     def _failed(self, err):
         """
@@ -48,10 +49,22 @@ class RPC(xmlrpc.XMLRPC):
         :returns:      a deferred object
         """
 
-        print host, user, passwd
         d = self._manager.commit_job(host, user, passwd)
         d.addErrback(self._failed)
         return d
+
+    def xmlrpc_request(self, request_id=0, callback=""):
+        """
+        rpc interface for dolphin web project.
+
+        :param request_id: request_id from dolphin web
+        :param callback:   callback URL given by dolphin web
+        :return: (success, message)
+        """
+
+        req = request.Request(request_id, callback)
+        req.start()
+        return True, ''
 
 port = int(CFG['server']['port'])
 r = RPC()

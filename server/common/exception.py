@@ -59,3 +59,43 @@ class IPMIToolError(DException):
 
     message = "Runtime error."
     code = 401
+
+class RequestError(DException):
+    """
+    Raise when failed to query or validate request detail.
+    """
+
+    message = "illegal request"
+    code = 402
+
+class HostsError(DException):
+    """
+    Raise when failed to query hosts
+    """
+
+    message = "failed to get hosts"
+    code = 403
+
+class HostsNotFoundError(DException):
+    """
+    Raise when can not found any associated hosts
+    """
+
+    message = "hosts not found"
+    code = 404
+
+class IllegalHostError(DException):
+    """
+    Raise when host info is not qualified
+    """
+
+    message = "illegal host"
+    code = 404
+
+class DBUpdateError(DException):
+    """
+    Raise when filed to update database somewhere
+    """
+
+    message = "DB error"
+    code = 405

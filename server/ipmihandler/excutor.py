@@ -51,7 +51,7 @@ class Excutor(object):
 
         :param result: (out, err, code) by Twisted
         :returns:      output text combined with stdout & stderr
-        :raises:       ValueError
+        :raises:       exception.IPMIToolError
         """
 
         out, err, code = result

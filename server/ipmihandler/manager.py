@@ -97,6 +97,7 @@ class Manager(object):
         :param user:   ipmi username
         :param passwd: ipmi password
         :returns:      a deferred object
+        :raises:       exception.InvalidIPAddr
         """
 
         if not utils.is_valid_ip_address_v4(host):
