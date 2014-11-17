@@ -29,6 +29,7 @@ class Manager(object):
     """
 
     def __init__(self):
+        log.msg('INOF : Manager object __init__')
         # queue for pending ipmi task
         self._pending = deque()
         # how many tack can be run concurrently

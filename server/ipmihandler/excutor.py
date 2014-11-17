@@ -13,6 +13,7 @@ from twisted.python import log
 
 from common.config import CFG
 from common import exception
+import interpreter
 
 LOGTAG = __name__
 FORMAT = 'ipmitool -I lanplus -H %s -U %s -P %s sel list -vv'
@@ -57,13 +58,13 @@ class Excutor(object):
         out, err, code = result
         if code != 0:
             raise exception.IPMIToolError()
-        return out
+        return (out, err)
 
     def _explain(self, result):
         """
         Explain the output.
 
-        :param result: output given by _on_exit()
+        :param result: out, err given by _on_exit()
         """
 
         if self.d is None:
@@ -72,7 +73,9 @@ class Excutor(object):
 
         d = self.d
         self.d = None
-        d.callback(result)
+
+        out, err = result
+        d.callback(interpreter.interpret(out, err))
 
     def _failed(self, err):
         """
