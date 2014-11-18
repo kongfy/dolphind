@@ -20,6 +20,7 @@ def _description(out):
     :param out: string from standard output
     :yeild:     description dictionary
     """
+
     desc = {}
     flag = False
     for line in out.splitlines():
@@ -43,9 +44,21 @@ def _entry(err):
     :param err: string from standard error
     :yeild:     raw entry string
     """
+
     for line in err.splitlines():
         if 'SEL Entry' in line:
             yield line.split(':')[1].lstrip()
+
+def _dispatch(desc, entry):
+    """
+    dispatch the SEL entry to an interpreter.
+
+    :param desc:  dictionary for SEL description
+    :param entry: raw entry for SEL description
+    :returns:     (information, level) for given SEL entry
+    """
+
+    return (desc, 'ERROR')
 
 def interpret(out, err):
     """
@@ -55,10 +68,12 @@ def interpret(out, err):
     :param err: string from standard error
     :returns:   list of interpreted infomation
     """
-    for desc, entry in itertools.izip(_description(out), _entry(err)):
-        print entry
 
-    return []
+    ans = []
+    for desc, entry in itertools.izip(_description(out), _entry(err)):
+        ans.append(_dispatch(desc, entry))
+
+    return ans
 
 if __name__ == '__main__':
     # unit test
