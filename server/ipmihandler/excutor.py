@@ -75,7 +75,12 @@ class Excutor(object):
         self.d = None
 
         out, err = result
-        d.callback(interpreter.interpret(out, err))
+        try:
+            ans = interpreter.interpret(out, err)
+            d.callback(ans)
+        except (Exception), e:
+            log.msg('ERROR : %s' % e, system=LOGTAG)
+            self._failed(exception.InterpretError())
 
     def _failed(self, err):
         """
@@ -85,7 +90,7 @@ class Excutor(object):
         """
 
         if self.d is None:
-            log.msg("WARNING : Nowhere to put results.", system=LOGTAG)
+            log.msg('WARNING : Nowhere to put results.', system=LOGTAG)
             return
 
         d = self.d

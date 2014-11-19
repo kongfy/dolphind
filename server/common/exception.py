@@ -94,8 +94,16 @@ class IllegalHostError(DException):
 
 class DBUpdateError(DException):
     """
-    Raise when filed to update database somewhere
+    Raise when failed to update database somewhere
     """
 
     message = "DB error"
     code = 405
+
+class InterpretError(DException):
+    """
+    Raise when encounter error in interpret process
+    """
+
+    message = "Interpreter Error"
+    code = 406

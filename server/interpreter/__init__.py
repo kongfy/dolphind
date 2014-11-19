@@ -11,7 +11,9 @@ __authors__ = [
 
 import itertools
 
-Dispatch_table = {}
+import sel
+import table
+import Default
 
 def _description(out):
     """
@@ -58,7 +60,38 @@ def _dispatch(desc, entry):
     :returns:     (information, level) for given SEL entry
     """
 
-    return (desc, 'ERROR')
+    s = sel.sel_union(entry)
+
+    interpreter_queue = table.DEFAULT_QUEUE
+    if s.sel.record_type >= 0xc0:
+        # OEM timestamped & non-timestamped
+        interpreter_queue = table.OEM_RECORD_TABLE.get(s.sel.record_type,
+                                                       table.DEFAULT_QUEUE)
+    elif s.sel.record_type == 0x02:
+        # system event record
+        event_type = s.sel.sel_type.standard_type.event_type
+        if event_type == 0x6f:
+            # sensor-specific
+            interpreter_queue = table.OEM_SENSOR_TABLE.get(s.sel.sel_type.standard_type.sensor_type,
+                                                           table.DEFAULT_QUEUE)
+        elif event_type >= 0x70 and event_type <= 0x7f:
+            # OEM event
+            interpreter_queue = table.OEM_EVENT_TABLE.get(event_type,
+                                                          table.DEFAULT_QUEUE)
+
+    result = None
+    for interpreter in interpreter_queue:
+        result = interpreter.interpret(desc, s)
+        if result != None:
+            break
+
+    if result == None:
+        for interpreter in table.DEFAULT_QUEUE:
+            result = interpreter.interpret(desc, s)
+            if result != None:
+                break
+
+    return result
 
 def interpret(out, err):
     """
