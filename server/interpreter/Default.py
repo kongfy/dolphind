@@ -8,7 +8,7 @@ __authors__ = [
     '"Fanyu Kong" <me@kongfy.com>',
 ]
 
-import Base
+from interpreter import Base
 
 class Default(Base.Base):
     """
@@ -24,9 +24,13 @@ class Default(Base.Base):
 
         :param desc: description dictionary
         :param sel:  SEL data structure
-        :return:     (id, type, level, desc)
+        :return:     (id, type, level, desc, info)
         """
 
-        return sel.sel.record_id, sel.sel.record_type, 'ERROR', desc
+        return (sel.sel.record_id,
+                sel.sel.record_type,
+                'ERROR',
+                desc.get('Description', 'Unknown SEL'),
+                desc)
 
 INST = Default()

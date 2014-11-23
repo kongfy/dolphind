@@ -85,6 +85,7 @@ class HostRequest(object):
                             execute*() produced or affected
         """
 
+        print res
         transaction.excutemany('INSERT')
         return transaction.rowcount
 

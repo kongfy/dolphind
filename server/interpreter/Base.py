@@ -9,7 +9,8 @@ __authors__ = [
 ]
 
 import abc
-import table
+
+from interpreter import table
 
 class Base(object):
     """
@@ -77,6 +78,6 @@ class Base(object):
 
         :param desc: description dictionary
         :param sel:  SEL data structure
-        :return:     (id, type, level, desc)
+        :return:     (id, type, level, desc, info)
         """
         pass
