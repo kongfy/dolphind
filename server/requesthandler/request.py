@@ -127,7 +127,7 @@ class Request(object):
 
     # <<<=============== callbacks for a single host ================>>> #
 
-    def _host_succeed(self):
+    def _host_succeed(self, hostrequest_id):
         """
         Call back for a single host ipmitool
         """
@@ -153,7 +153,7 @@ class Request(object):
 
         if self._succeed + self._failed == self._count:
             self._status = 2
-            self._update_db('%s/%s succeed' % (self._succeed, self._failed))
+            self._update_db('%s/%s succeed' % (self._succeed, self._count))
 
     def _abort(self, err):
         """

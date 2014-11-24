@@ -89,12 +89,12 @@ class HostRequest(object):
         write ipmitool's output to database
 
         :param transaction: adbapi.Transaction object
-        :param ipmi_info :        data
+        :param ipmi_info:   data
         :returns:           the number of rows that the last
                             execute*() produced or affected
         """
 
-        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, level, desc, info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_level, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s)'
         transaction.executemany(sql, self._data_convertor(ipmi_info))
 
         sql = 'UPDATE ipmi_requesthost SET status = %s, end_time = %s WHERE id = %s'
@@ -116,7 +116,7 @@ class HostRequest(object):
 
         d = self.d
         self.d = None
-        d.callback()
+        d.callback(self._hostrequest_id)
 
     def _db_failed(self, err):
         """
