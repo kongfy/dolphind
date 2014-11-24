@@ -12,6 +12,7 @@ from twisted.internet import defer
 from twisted.python import log
 
 import datetime
+import json
 
 from common import db
 from common import exception
@@ -75,18 +76,32 @@ class HostRequest(object):
 
     # <<<=============== write back to database ================>>> #
 
-    def _writeback(self, transaction, res):
+    def _data_convertor(self, ipmi_info):
+        """
+        """
+
+        return [[sel_id, sel_type, level, desc, json.dumps(info),
+                 self._request_id, self._hostrequest_id]
+                for sel_id, sel_type, level, desc, info in ipmi_info]
+
+    def _writeback(self, transaction, ipmi_info):
         """
         write ipmitool's output to database
 
         :param transaction: adbapi.Transaction object
-        :param res :        data
+        :param ipmi_info :        data
         :returns:           the number of rows that the last
                             execute*() produced or affected
         """
 
-        print res
-        transaction.excutemany('INSERT')
+        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, level, desc, info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+        transaction.executemany(sql, self._data_convertor(ipmi_info))
+
+        sql = 'UPDATE ipmi_requesthost SET status = %s, end_time = %s WHERE id = %s'
+        transaction.execute(sql, [self._status,
+                                  datetime.datetime.now(),
+                                  self._hostrequest_id])
+
         return transaction.rowcount
 
     def _db_succeed(self, rowcount):
