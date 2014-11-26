@@ -8,6 +8,8 @@ __authors__ = [
     '"Fanyu Kong" <me@kongfy.com>',
 ]
 
+import datetime
+
 from interpreter import Base
 
 class Default(Base.Base):
@@ -27,9 +29,12 @@ class Default(Base.Base):
         :return:     (id, type, datetime, level, desc, info)
         """
 
+        sel_datetime = desc.get('Timestamp',
+                                datetime.datetime.fromtimestamp(0))
+
         return (sel.sel.record_id,
                 sel.sel.record_type,
-                desc.get('Timestamp', None),
+                datetime.datetime.strptime(sel_datetime, '%m/%d/%Y %H:%M:%S'),
                 'ERROR',
                 desc.get('Description', 'Unknown SEL'),
                 desc)
