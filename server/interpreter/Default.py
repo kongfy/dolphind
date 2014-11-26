@@ -29,6 +29,7 @@ class Default(Base.Base):
 
         return (sel.sel.record_id,
                 sel.sel.record_type,
+                desc.get('Timestamp', None),
                 'ERROR',
                 desc.get('Description', 'Unknown SEL'),
                 desc)

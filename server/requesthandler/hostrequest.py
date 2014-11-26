@@ -78,11 +78,15 @@ class HostRequest(object):
 
     def _data_convertor(self, ipmi_info):
         """
+        repack data format for dolphin
+
+        :param ipmi_info: data list
+        :returns:         converted data list
         """
 
-        return [[sel_id, sel_type, level, desc, json.dumps(info),
+        return [[sel_id, sel_type, sel_datetime, level, desc, json.dumps(info),
                  self._request_id, self._hostrequest_id]
-                for sel_id, sel_type, level, desc, info in ipmi_info]
+                for sel_id, sel_type, sel_datetime, level, desc, info in ipmi_info]
 
     def _writeback(self, transaction, ipmi_info):
         """
@@ -94,7 +98,7 @@ class HostRequest(object):
                             execute*() produced or affected
         """
 
-        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_level, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_level, sel_timestamp, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
         transaction.executemany(sql, self._data_convertor(ipmi_info))
 
         sql = 'UPDATE ipmi_requesthost SET status = %s, end_time = %s WHERE id = %s'

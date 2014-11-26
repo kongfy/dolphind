@@ -78,6 +78,6 @@ class Base(object):
 
         :param desc: description dictionary
         :param sel:  SEL data structure
-        :return:     (id, type, level, desc, info)
+        :return:     (id, type, datetime, level, desc, info)
         """
         pass
