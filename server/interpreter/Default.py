@@ -24,7 +24,7 @@ class Default(Base.Base):
 
         :param desc: description dictionary
         :param sel:  SEL data structure
-        :return:     (id, type, level, desc, info)
+        :return:     (id, type, datetime, level, desc, info)
         """
 
         return (sel.sel.record_id,

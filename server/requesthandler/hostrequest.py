@@ -94,19 +94,22 @@ class HostRequest(object):
 
         :param transaction: adbapi.Transaction object
         :param ipmi_info:   data
-        :returns:           the number of rows that the last
-                            execute*() produced or affected
+        :returns:           the number of rows effected
         """
 
-        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_level, sel_timestamp, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+        count = 0
+
+        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_datetime, sel_level, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
         transaction.executemany(sql, self._data_convertor(ipmi_info))
+        count += transaction.rowcount
 
         sql = 'UPDATE ipmi_requesthost SET status = %s, end_time = %s WHERE id = %s'
         transaction.execute(sql, [self._status,
                                   datetime.datetime.now(),
                                   self._hostrequest_id])
+        count += transaction.rowcount
 
-        return transaction.rowcount
+        return count
 
     def _db_succeed(self, rowcount):
         """
