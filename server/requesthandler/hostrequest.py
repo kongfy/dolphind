@@ -99,7 +99,7 @@ class HostRequest(object):
 
         count = 0
 
-        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_datetime, sel_level, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_timestamp, sel_level, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
         transaction.executemany(sql, self._data_convertor(ipmi_info))
         count += transaction.rowcount
 
