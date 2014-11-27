@@ -9,11 +9,19 @@ __authors__ = [
     '"Fanyu Kong" <me@kongfy.com>',
 ]
 
-import itertools
+__all__ = ['sel', 'table']
 
-from interpreter import sel
-from interpreter import table
-from interpreter import Default
+import os
+import os.path
+path = os.path.dirname(__file__)
+for filename in os.listdir(path):
+    if filename.startswith('interpreter'):
+        name, ext = os.path.splitext(filename)
+        __all__.append(name)
+
+from interpreter import *
+
+import itertools
 
 def _description(out):
     """

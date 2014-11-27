@@ -64,7 +64,7 @@ class Base(object):
 
         self._append_to_table(table.OEM_SENSOR_TABLE, sensor_type)
 
-    def register_system_event(self):
+    def _register_system_event(self):
         """
         register self as a default interpreter.
         """

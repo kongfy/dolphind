@@ -18,7 +18,7 @@ class Default(Base.Base):
     """
 
     def __init__(self):
-        self.register_system_event()
+        self._register_system_event()
 
     def interpret(self, desc, sel):
         """
