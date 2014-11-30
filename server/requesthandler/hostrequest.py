@@ -84,9 +84,9 @@ class HostRequest(object):
         :returns:         converted data list
         """
 
-        return [[sel_id, sel_type, sel_datetime, level, desc, json.dumps(info),
+        return [[sel_id, sel_type, sel_datetime, severity, desc, json.dumps(info),
                  self._request_id, self._hostrequest_id]
-                for sel_id, sel_type, sel_datetime, level, desc, info in ipmi_info]
+                for sel_id, sel_type, sel_datetime, level, severity, desc, info in ipmi_info]
 
     def _writeback(self, transaction, ipmi_info):
         """
