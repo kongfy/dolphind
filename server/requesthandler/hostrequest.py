@@ -84,7 +84,7 @@ class HostRequest(object):
         :returns:         converted data list
         """
 
-        return [[sel_id, sel_type, sel_datetime, severity, desc, json.dumps(info),
+        return [[sel_id, sel_type, sel_datetime, level, severity, desc, json.dumps(info),
                  self._request_id, self._hostrequest_id]
                 for sel_id, sel_type, sel_datetime, level, severity, desc, info in ipmi_info]
 
@@ -99,7 +99,7 @@ class HostRequest(object):
 
         count = 0
 
-        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_timestamp, sel_level, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+        sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_timestamp, sel_level, sel_severity, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
         transaction.executemany(sql, self._data_convertor(ipmi_info))
         count += transaction.rowcount
 
