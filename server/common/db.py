@@ -15,4 +15,5 @@ DBPOOL = adbapi.ConnectionPool("MySQLdb",
                                port=int(config.CFG['database']['port']),
                                user=config.CFG['database']['user'],
                                passwd=config.CFG['database']['passwd'],
-                               db=config.CFG['database']['db'])
+                               db=config.CFG['database']['db'],
+                               cp_reconnect=True)
