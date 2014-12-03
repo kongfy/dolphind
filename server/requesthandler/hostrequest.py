@@ -65,7 +65,7 @@ class HostRequest(object):
 
         self._status = 3
         sql = 'UPDATE ipmi_requesthost SET status = %s, end_time = %s, detail = %s WHERE id = %s'
-        detail = '%s : %s' % (err.value.code, err.value.message)
+        detail = err.value.message
         # ignore sql result
         db.DBPOOL.runOperation(sql, [self._status,
                                      datetime.datetime.now(),

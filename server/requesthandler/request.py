@@ -140,8 +140,8 @@ class Request(object):
         :param err: error
         """
 
-        log.msg("ERROR : host faild in request %s : ERROR %s: %s"
-                % (self._request_id, err.value.code, err.value.message),
+        log.msg("ERROR : host faild in request %s : ERROR: %s"
+                % (self._request_id, err.value.message),
                 system=LOGTAG)
 
         self._failed += 1
