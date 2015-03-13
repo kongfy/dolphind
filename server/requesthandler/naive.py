@@ -45,6 +45,7 @@ class Naive(object):
                                      passwd=config.CFG['database']['passwd'],
                                      db=config.CFG['database']['db'])
 
+        self._conn.autocommit(True)
         self._cur = self._conn.cursor()
 
     def _data_convertor(self, ipmi_info, hostrequest_id):
@@ -75,7 +76,6 @@ class Naive(object):
         self._cur.execute(sql, (self._status, '%s targets found' % self._count, self._request_id))
 
         for host in info:
-            print host
             hostrequest_id, ip_addr, username, password, start_time, end_time, status, detail, _ = host
             sql = 'UPDATE ipmi_requesthost SET status = %s, start_time = %s WHERE id = %s'
             self._cur.execute(sql, (1,
@@ -101,3 +101,6 @@ class Naive(object):
                                 datetime.datetime.now(),
                                 '%s/%s succeed' % (self._succeed, self._count),
                                 self._request_id))
+
+        self._cur.close()
+        self._conn.close()
