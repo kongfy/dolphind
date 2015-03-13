@@ -86,8 +86,13 @@ class Naive(object):
                                     hostrequest_id))
 
             # do work
+            s = datetime.datetime.now()
             p = subprocess.Popen(command(ip_addr, username, password), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = p.communicate()
+            e = datetime.datetime.now()
+            t = e - s
+            print 'time : %s' % t
+
             ipmi_info = interpreter.interpret(out, err)
 
             sql = 'INSERT INTO ipmi_info(sel_id, sel_type, sel_timestamp, sel_level, sel_severity, sel_desc, sel_info, request_id, host_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
