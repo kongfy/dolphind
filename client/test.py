@@ -40,7 +40,7 @@ def main():
     """
     url = 'http://%s:%s' % (CFG['client']['server'], CFG['client']['port'])
     proxy = Proxy(url)
-    proxy.callRemote('request',
+    proxy.callRemote('naive',
                      1,
                      'http://127.0.0.1/dolphin/callback').addCallbacks(success_callback, error_callback)
 

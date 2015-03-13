@@ -18,6 +18,7 @@ from common.config import CFG
 
 from ipmihandler import manager
 from requesthandler import request
+from requesthandler import naive
 
 class RPC(xmlrpc.XMLRPC):
     """
@@ -63,6 +64,12 @@ class RPC(xmlrpc.XMLRPC):
         """
 
         req = request.Request(request_id, callback)
+        req.start()
+        return True, ''
+
+    def xmlrpc_naive(self, request_id=0, callback=""):
+
+        req = naive.Naive(request_id)
         req.start()
         return True, ''
 
