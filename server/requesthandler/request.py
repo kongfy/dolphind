@@ -213,6 +213,11 @@ class Request(object):
         Seemingly, this method need not to retry, am I right?
         """
 
+        endtime = datetime.datetime.now()
+        interval = (endtime - self._starttime).microsecond
+
+        print 'Time for %s : %s ms' % (self._request_id, interval)
+
         url = self._callback + '?request_id=%s&status=%s&success_count=%s' % (self._request_id, self._status, self._succeed)
         client.getPage(url)
 
@@ -220,5 +225,7 @@ class Request(object):
         """
         entry point.
         """
+
+        self._starttime = datetime.datetime.now()
 
         self._get_request()

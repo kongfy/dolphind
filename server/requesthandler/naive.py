@@ -59,6 +59,9 @@ class Naive(object):
         entry point.
         """
 
+        starttime = datetime.datetime.now()
+
+        #do something
         # ((1L, datetime.datetime(2009, 6, 9, 0, 24, 8), datetime.datetime(2009, 6, 9, 0, 24, 8), 1, 'No detail'),)
         sql = 'SELECT * FROM ipmi_request WHERE id = %s'
         length = self._cur.execute(sql, (self._request_id, ))
@@ -105,3 +108,7 @@ class Naive(object):
 
         self._cur.close()
         self._conn.close()
+
+        endtime = datetime.datetime.now()
+        interval = (endtime - starttime).microsecond
+        print 'Time for %s : %s ms' % (self._request_id, interval)
