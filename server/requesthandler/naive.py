@@ -94,6 +94,7 @@ class Naive(object):
             self._cur.execute(sql, (2,
                                     datetime.datetime.now(),
                                     hostrequest_id))
+            self._succeed += 1
 
         self._status = 2
         sql = 'UPDATE ipmi_request SET status = %s, end_time = %s, detail = %s WHERE id = %s'
