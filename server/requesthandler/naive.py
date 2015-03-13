@@ -110,5 +110,5 @@ class Naive(object):
         self._conn.close()
 
         endtime = datetime.datetime.now()
-        interval = (endtime - starttime).microsecond
-        print 'Time for %s : %s ms' % (self._request_id, interval)
+        interval = endtime - starttime
+        print 'Time for %s : %s' % (self._request_id, interval)

@@ -214,9 +214,9 @@ class Request(object):
         """
 
         endtime = datetime.datetime.now()
-        interval = (endtime - self._starttime).microsecond
+        interval = endtime - self._starttime
 
-        print 'Time for %s : %s ms' % (self._request_id, interval)
+        print 'Time for %s : %s' % (self._request_id, interval)
 
         url = self._callback + '?request_id=%s&status=%s&success_count=%s' % (self._request_id, self._status, self._succeed)
         client.getPage(url)
