@@ -152,6 +152,10 @@ class Request(object):
         """
 
         if self._succeed + self._failed == self._count:
+            endtime = datetime.datetime.now()
+            interval = endtime - self._starttime
+            print 'Time for %s : %s' % (self._request_id, interval)
+
             self._status = 2
             self._update_db('%s/%s succeed' % (self._succeed, self._count))
 
@@ -212,11 +216,6 @@ class Request(object):
         Call dolphin web hook
         Seemingly, this method need not to retry, am I right?
         """
-
-        endtime = datetime.datetime.now()
-        interval = endtime - self._starttime
-
-        print 'Time for %s : %s' % (self._request_id, interval)
 
         url = self._callback + '?request_id=%s&status=%s&success_count=%s' % (self._request_id, self._status, self._succeed)
         client.getPage(url)
