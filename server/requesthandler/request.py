@@ -217,8 +217,7 @@ class Request(object):
         Seemingly, this method need not to retry, am I right?
         """
 
-        url = self._callback + '?request_id=%s&status=%s&success_count=%s' % (self._request_id, self._status, self._succeed)
-        client.getPage(url)
+        pass
 
     def start(self):
         """
